@@ -19,6 +19,9 @@ public class SaleService {
 	@Autowired
 	private SaleRepository repository;
 	
+	@Autowired
+	private SmsService smsService;
+	
 	public Page<Sale> findSales(String minDate, String maxDate, Pageable pageable) {
 		
 		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
@@ -27,5 +30,20 @@ public class SaleService {
 		LocalDate max = !StringUtils.hasText(maxDate) ? today : LocalDate.parse(maxDate);
 		
 		return repository.findSales(min, max, pageable);
+	}
+	
+	public void notifySale(Long saleId) {
+		Sale sale = repository.findById(saleId)
+				.orElseThrow(() -> new RuntimeException("Venda não encontrada"));
+		
+		String date = sale.getDate().getMonthValue() + "/" + sale.getDate().getYear();
+		
+		String msg = new StringBuilder()
+			.append("O vendedor " + sale.getSellerName())
+			.append(" foi destaque em " + date)
+			.append(" com um total de R$ " + String.format("%.2f", sale.getAmount()))
+			.toString();
+		
+		smsService.sendSms(msg);
 	}
 }
