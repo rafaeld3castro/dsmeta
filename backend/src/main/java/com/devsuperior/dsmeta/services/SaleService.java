@@ -1,5 +1,6 @@
 package com.devsuperior.dsmeta.services;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -37,11 +38,12 @@ public class SaleService {
 				.orElseThrow(() -> new RuntimeException("Venda não encontrada"));
 		
 		String date = sale.getDate().getMonthValue() + "/" + sale.getDate().getYear();
+		String amount = new DecimalFormat("#,##0.00").format(sale.getAmount());
 		
 		String msg = new StringBuilder()
 			.append("O vendedor " + sale.getSellerName())
 			.append(" foi destaque em " + date)
-			.append(" com um total de R$ " + String.format("%.2f", sale.getAmount()))
+			.append(" com um total de R$ " + amount)
 			.toString();
 		
 		smsService.sendSms(msg);
