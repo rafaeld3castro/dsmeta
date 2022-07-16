@@ -38,7 +38,7 @@ public class SaleService {
 				.orElseThrow(() -> new RuntimeException("Venda não encontrada"));
 		
 		String date = sale.getDate().getMonthValue() + "/" + sale.getDate().getYear();
-		String amount = new DecimalFormat("#,##0.00").format(sale.getAmount());
+		String amount = new DecimalFormat("###,###,##0.00").format(sale.getAmount());
 		
 		String msg = new StringBuilder()
 			.append("O vendedor " + sale.getSellerName())
