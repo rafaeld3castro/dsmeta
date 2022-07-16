@@ -1,9 +1,11 @@
 package com.devsuperior.dsmeta.services;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,8 @@ public class SaleService {
 	@Autowired
 	private SmsService smsService;
 	
+	private static final DecimalFormatSymbols REAL = new DecimalFormatSymbols(new Locale("pt","BR"));
+	
 	public Page<Sale> findSales(String minDate, String maxDate, Pageable pageable) {
 		
 		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
@@ -38,7 +42,7 @@ public class SaleService {
 				.orElseThrow(() -> new RuntimeException("Venda não encontrada"));
 		
 		String date = sale.getDate().getMonthValue() + "/" + sale.getDate().getYear();
-		String amount = new DecimalFormat("###,###,##0.00").format(sale.getAmount());
+		String amount = new DecimalFormat("###,###,##0.00", REAL).format(sale.getAmount());
 		
 		String msg = new StringBuilder()
 			.append("O vendedor " + sale.getSellerName())
